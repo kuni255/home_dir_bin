@@ -1,0 +1,23 @@
+#!/bin/bash
+if [ $# -ne 4 ]
+then
+	echo "usage:pastedrw -d \"[delimitor]\" [data file you want to rewrite] [data file you want to add]"
+	exit 0;
+fi
+if [ ! -f $3 ]
+then
+	echo "$3 No such file or directory!!"
+	exit 0;
+fi 
+if [ $4 !=  "-" ]
+then
+	if [ ! -f $4 ]
+	then
+		echo "$4 No such file or directory!!"
+		exit 0;
+	fi
+fi
+del=$2
+paste -d "$del" $3 $4 > temp.txt 
+cp temp.txt $3
+rm temp.txt

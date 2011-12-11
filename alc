@@ -1,0 +1,15 @@
+#!/bin/bash
+while :
+do
+	read -p "alc> " WORDS
+	if [ "$WORDS" != "" ]
+	then
+		if [ "$WORDS" = "q" -o "$WORDS" = "Q" ]
+		then
+			exit
+		fi
+		URL='http://eow.alc.co.jp/"'$WORDS'"/UTF-8/'
+		eval w3m +36 $URL
+		WORDS=""
+	fi
+done

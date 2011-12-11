@@ -1,0 +1,22 @@
+#!/bin/bash
+#############################################
+#   this program change eps image
+#   gnuline width 
+#############################################
+if [ $# -ne 2 ]
+then 
+	echo "usage: epswidth epsfile linewidth"
+	exit 0
+fi
+# comfirm image type is eps or not
+type=`echo $1 | grep -c '\.eps$'`
+if [ $type -ne 1 ]
+then
+	echo "$1 is not eps image!!"
+	exit 0
+fi
+echo "convert $1 gnulinewidth 5.000 -> $2"
+f_eps=$1
+cat $f_eps | grep -n '\/gnulinewidth' | 
+cat $1 | sed -e 's/gnulinewidth 5.000/gnulinewidth '$2'/g' > temp.eps
+mv temp.eps $1

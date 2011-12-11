@@ -1,0 +1,23 @@
+#!/bin/csh 
+# this program add tittle to PDF
+#usage:pdfmt pdf-file tittle
+set CPD=`realpath $0`
+set CPD="$CPD:h"
+set PDF=$1
+set TIL=$2
+set TFL="tmp_$$.tex"
+#make tex file
+echo "\documentclass{article}" > "$CPD/$TFL"
+echo "\usepackage{pdfpages}" >> "$CPD/$TFL"
+echo "\usepackage[bookmarks=false,pdftitle={$TIL}]{hyperref}" >> "$CPD/$TFL"
+echo "\usepackage[papersize={127mm,89mm}]{geometry}" >> "$CPD/$TFL"
+echo "\pagestyle{empty}" >> "$CPD/$TFL"
+echo "\special{papersize=127mm,89mm}" >> "$CPD/$TFL"
+echo "\begin{document}" >> "$CPD/$TFL"
+echo "\includepdf[pages=-]{$PDF}" >> "$CPD/$TFL"
+echo "\end{document}" >> "$CPD/$TFL"
+# COMPILE TeX FILE
+xelatex -output-directory=$CPD $CPD/$TFL >/dev/null
+set OPD="$CPD/$TFL:r.pdf"
+mv $OPD $PDF
+rm $CPD/$TFL:r.*

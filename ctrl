@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+if(@ARGV!=1){
+	die "Usage:$0 the_number_of_contour_level\n";
+}
+my $cntrLevel=$ARGV[0];
+my $ln=$cntrLevel+1;
+my $lt=2;
+
+while($cntrLevel){
+	print "set style line $ln lt $lt\n";
+	$ln--;
+	$lt++;
+	$cntrLevel--;
+}
+print "set style increment user\n";

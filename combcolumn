@@ -1,0 +1,103 @@
+#!/bin/bash
+USAGE="usage:combColumn -d \"delimitor\" -f filename column1 colemn2 ... -f filename column1 column2 ..."
+E_EXIST="No such file or directory!!"
+CNT_F=-1
+declare -a FILES
+declare -a COLS
+declare -a F_CUT
+f_exist(){
+    #f_exist:if file exist return 0
+    #    if file does not exist display error message
+    if [ ! -f $ARG2 ]
+    then
+        echo "$E_EXIST:$ARG2"
+        exit 1
+    else
+        return 0
+    fi
+}
+file(){
+    f_exist $ARG2 
+    ((CNT_F++))
+    FILES[$CNT_F]=$ARG2
+    return 0
+}
+checkCol(){
+    checkNum=`echo $COL_NUM | grep '[^0-9]\{1,\}'`
+    if [  $checkNum ]
+    then
+        echo "$COL_NUM: Numeric argument required"
+        exit 1
+    else
+        NF=`awk 'END{print NF;}' ${FILES[$CNT_F]}`
+        if [ $COL_NUM -gt  $NF ]
+        then
+            echo "Invalid column number(${FILES[$CNT_F]} NF=$NF):$COL_NUM"
+            exit 1
+        fi
+        return 0
+    fi
+}
+if [ $# -lt 5 ]
+then
+    echo $USAGE
+    exit 1
+fi
+if [ $1 != "-d" ]
+then
+    echo $USAGE
+    exit 1
+fi
+DEL=\"$2\"
+if [ $3 != "-f" ]
+then
+    echo $USAGE
+    exit 1
+fi
+ARG2=$4
+file $ARG2
+COL_NUM=$5
+checkCol $COL_NUM ${FILES[$CNT_F]}
+COLS[$CNT_F]="\$${COL_NUM},${DEL},"
+shift
+shift
+shift
+shift
+shift
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -f)    
+        shift
+        ARG2=$1
+        file $ARG2
+        shift
+        COL_NUM=$1
+        if [ "$COL_NUM" == "" ]
+        then
+            echo "Column number of ${FILES[$CNT_F]} is not appointed !!"
+            exit 1
+        fi
+        checkCol $COL_NUM ${FILES[$CNT_F]}
+        COLS[$CNT_F]="\$${COL_NUM},${DEL},"
+        shift
+        ;;    
+    *)     
+        COL_NUM=$1
+        checkCol $COL_NUM ${FILES[$CNT_F]}
+        COLS[$CNT_F]=${COLS[$CNT_F]}"\$${COL_NUM},${DEL},"
+        shift;;
+    esac
+done
+CNT=0
+while [ $CNT -le $CNT_F ]
+do
+    COLS[$CNT]=`echo ${COLS[$CNT]} | sed -e "s/,$DEL,$/;/g" `
+    F_CUT[$CNT]=${FILES[$CNT]}".cut"
+    awk "{print ${COLS[$CNT]};}" ${FILES[$CNT]} > ${F_CUT[$CNT]}
+    PASTE=${PASTE}" "${F_CUT[$CNT]}
+    CNT=`expr $CNT + 1`
+done
+CNT=0
+DEL=`echo $DEL | sed -e 's/"//g'`
+paste -d "$DEL" $PASTE

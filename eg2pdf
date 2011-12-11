@@ -1,0 +1,44 @@
+#!/bin/bash
+USAGE="$0 input-epsfile"
+if [ $# -ne 1 ]
+then
+	echo "$USAGE" >&2
+	exit
+fi
+if [ ! -f $1 ]
+then
+	echo "$1:No such file or directory!!" >&2
+	exit
+fi
+EPS_CHK=`grep -c "EPSF" $1`
+if [ $EPS_CHK -eq 0 ]
+then
+	echo "$1:This is not eps file!!">&2
+	exit
+fi
+EPS=$1
+epslwidth $EPS 12
+# git processing
+GITADD=`git status -s | grep -c "?? $EPS"`
+if [ $GITADD -ne 0 ]
+then
+	echo "git add $EPS"
+	git add $EPS
+fi
+git commit $EPS
+epstopdf $EPS
+P_EPS=`realpath $EPS`
+PDF=`echo $EPS | sed -e 's/\.eps/.pdf/g'`
+HEAD="$P_EPS"
+echo "eps file PATH: $HEAD" > temp.e2ps
+echo "`git log $EPS`" >> temp.e2ps
+cat temp.e2ps | nkf -e | e2ps -l  > temp.ps
+rm temp.e2ps
+lpr temp.ps -P PDF
+CPS_PDF="${HOME}/PDF/temp.pdf"
+echo "Converting to PDF..."
+pdftk A=${CPS_PDF} cat AE output temp.pdf
+pdftk $PDF temp.pdf cat output tempc.pdf
+mv tempc.pdf $PDF
+rm temp.ps temp.pdf 
+rm $CPS_PDF

@@ -1,0 +1,36 @@
+#!/bin/bash
+# reading the type of handling
+echo "Please input s or e !"
+read fnhead
+echo "Please input minimum number !"
+read min
+echo "Pease input maximum number !"
+read max
+
+# reading file name
+echo "Please input filename !"
+read fname
+
+# calcurating the number of file
+dif=`expr $max - $min + 1 `
+echo "dif= $dif"
+
+# adding zero to filenumber 
+
+cnt=0
+# rename file name
+while [ "$cnt" -le "$dif" ]
+do
+	
+	# adding zero to filenumber 
+	difz=`expr 5 - ${#min} `
+	echo "difz= $difz"
+	while [ "$difz" -gt "0" ]
+	do
+		min=0$min
+		difza=`expr $difz - 1 `
+		difz=`expr $difza`
+		echo "difz= $difz " 
+	done
+	#$cnt=`expr $cnt + 1`
+done

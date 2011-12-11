@@ -1,0 +1,13 @@
+#!/bin/bash
+# this program resize fontsize in eps
+if [ $# -ne 2 ]
+then
+	echo "usage:./epsfontrs eps-file fontsize"
+	exit
+fi
+f_eps=$1
+rs=$2
+sed '
+	/findfont [0-9]\{1,\} scalefont/s/[0-9]\{1,\}/'$2'/
+	/\(Helvetica\)/s/ [0-9]\{1,\}\./'$2'./
+' $f_eps
