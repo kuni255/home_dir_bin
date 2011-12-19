@@ -1,10 +1,10 @@
 #!/usr/bin/tcsh
 # this program change yerrow line to red line in graph out from gnuplot
 if ($# != 1) then
-	echo "$0 eps_file"
+	echo "Usage:$0 eps_file"
 	exit
 endif
 set EPS=$1
 set TMP="$$.eps"
-awk '$1 ~ /LC5/{print "/LC5 {1 0 0} def";}$1!~/LC5/{print $0}' $EPS > $TMP
+awk '$1 ~ /\/LC5/{print "/LC5 {1 0 0} def";}$1!~/\/LC5/{print $0}' $EPS > $TMP
 mv $TMP $EPS
