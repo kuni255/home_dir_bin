@@ -1,0 +1,11 @@
+#!/usr/bin/tcsh
+if ( $# != 1 ) then
+   echo "Usage:$0 plt_file" > /dev/stderr
+   exit
+endif
+set PLT_FILE="$1"
+set TMP_FILE="$$.dat"
+sed -e "s/\(set bar\)/#\1/g" $PLT_FILE > $TMP_FILE
+sed -e "s/\(set style rectangle\)/#\1/g" $TMP_FILE > $PLT_FILE
+sed -e "s/\(set style circle\)/#\1/g" $PLT_FILE > $TMP_FILE
+mv $TMP_FILE $PLT_FILE

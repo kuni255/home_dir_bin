@@ -1,0 +1,10 @@
+#!/usr/bin/tcsh
+set USAGE="Usage: $0 eps-file"
+if ( $# != 1 ) then
+   echo $USAGE > /dev/stderr
+   exit
+endif
+set EPS=$1
+set TMP="$$.eps"
+sed -e '/^\/LT[0-9]/s/\[.*\]/[]/g' $EPS > $TMP
+mv $TMP $EPS

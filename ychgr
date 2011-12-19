@@ -1,0 +1,13 @@
+#!/usr/bin/tcsh
+# this program change eps line width recursive
+set PROG_PATH=`realpath $0`
+foreach i (`ls`)
+  set EPS_CHECK=`file $i | grep -c "EPS"`
+  if ( -d $i ) then
+    cd $i
+    $PROG_PATH
+    cd ../
+  else if ( $EPS_CHECK >= 1) then
+    ychg $i
+  endif
+end
