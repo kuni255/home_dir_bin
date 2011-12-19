@@ -1,0 +1,10 @@
+#!/usr/bin/tcsh
+set USAGE="Usage: $0 eps_file"
+if ( $# != 1 ) then
+   echo "$USAGE" > /dev/stderr
+   exit
+endif
+set EPS_FILE="$1"
+set TMP_FILE="$$.eps"
+epstool --copy -b $EPS_FILE $TMP_FILE > /dev/null
+mv $TMP_FILE $EPS_FILE
